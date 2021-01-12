@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     constants,
     models::task::Task,
+    services::account_service,
 };
 
 pub fn add_task(content: &str) -> Result<()>{
@@ -22,7 +23,8 @@ pub fn add_task(content: &str) -> Result<()>{
     match get_metadata(path) {
         Ok(mut tasks) => {
             let id = tasks.len()  as i32 + constants::SINGULAR_PLURAL_THRESHOLD;
-            let task = Task::new(content, id);
+            let user_id = account_service::get_current_user().unwrap().id;
+            let task = Task::new(content, id, user_id);
             tasks.push(task);
 
             write_to_file(&path, &tasks);
@@ -44,7 +46,8 @@ pub fn finish_task(id: i32) -> Result<()>{
 
     match get_metadata(path) {
         Ok(mut tasks) => {
-            match tasks.iter_mut().find(|task| task.id == id) {
+            let user_id = account_service::get_current_user().unwrap().id;
+            match tasks.iter_mut().find(|task| task.id == id && task.user_id == user_id) {
                 Some(task) => {
                     task.finished = true;
                     task.updated_at = Utc::now().naive_utc();
@@ -72,9 +75,11 @@ pub fn get_tasks() -> Result<()> {
 
     match get_metadata(path) {
         Ok(tasks) => {
+            let user_id = account_service::get_current_user().unwrap().id;
             let sorted_tasks = tasks
                 .clone()
                 .into_iter()
+                .filter(|task| task.user_id == user_id)
                 .sorted_by_key(|task| task.finished);
             let total = sorted_tasks.len();
             let mut finished_count = 0;
@@ -111,9 +116,10 @@ pub fn get_unfinished_tasks() -> Result<()> {
 
     match get_metadata(path) {
         Ok(tasks) => {
+            let user_id = account_service::get_current_user().unwrap().id;
             let unfinished_tasks: Vec<Task> = tasks
                 .iter()
-                .filter(|task| !task.finished)
+                .filter(|task| !task.finished && task.user_id == user_id)
                 .cloned()
                 .collect();
             let total = unfinished_tasks.len();

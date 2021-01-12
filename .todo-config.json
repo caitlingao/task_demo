@@ -1,0 +1,18 @@
+[
+  {
+    "id":1,
+    "username":"master001",
+    "email":"example001@example.com",
+    "password":"123456",
+    "created_at":"2021-01-12T13:55:04.107825",
+    "updated_at":"2021-01-12T13:55:04.107825"
+  },
+  {
+    "id":2,
+    "username":"master002",
+    "email":"example002@example.com",
+    "password":"123456",
+    "created_at":"2021-01-12T13:55:04.107825",
+    "updated_at":"2021-01-12T13:55:04.107825"
+  }
+]

@@ -1,10 +1,10 @@
 use std::fs;
-use std::error::Error;
+use std::io::{stdin, stdout, Write};
 
 use clap::ArgMatches;
 
 use constants::TMP_DIR;
-use services::task_service;
+use services::{task_service, account_service};
 
 mod cli;
 mod constants;
@@ -19,21 +19,36 @@ fn main() {
 
     let matches = cli::build_cli().get_matches();
     match matches.subcommand() {
-        Some(sub_cmd) => run_command(sub_cmd),
+        Some(sub_cmd) => {
+            if sub_cmd.0 != "login" {
+                if account_service::get_current_user().is_none() {
+                    println!("{}", constants::ASK_FOR_LOGIN);
+                    return;
+                }
+            }
+            run_command(sub_cmd)
+        },
         _ => unreachable!("The cli parser should prevent reaching here"),
     }
 }
 
 fn run_command(cmd: (&str, &ArgMatches)) {
-   match (cmd.0, cmd.1) {
+    match (cmd.0, cmd.1) {
        ("login", arg) => {
-           println!("{:?}", arg)
+           println!("Password:");
+
+           stdout().flush().unwrap();
+           let mut input = String::new();
+           stdin().read_line(&mut input).unwrap();
+           let password = input.trim();
+           let email = arg.value_of("user").unwrap();
+
+           account_service::login(email, password);
        },
-       ("logout", arg) => {
-           println!("{:?}", arg)
+       ("logout", _) => {
+           account_service::logout();
        },
        ("add", arg) => {
-           println!("{:?}", arg.value_of("content"));
            let content = arg.value_of("content").unwrap();
            task_service::add_task(content);
        }

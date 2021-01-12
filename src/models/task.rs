@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Task {
     pub id: i32,
+    pub user_id: i32,
     pub content: String,
     pub finished: bool,
     pub created_at: NaiveDateTime,
@@ -11,10 +12,11 @@ pub struct Task {
 }
 
 impl Task {
-    pub fn new(content: &str, id: i32) -> Self {
+    pub fn new(content: &str, id: i32, user_id: i32) -> Self {
         let now = Utc::now();
         Self {
             id,
+            user_id,
             content: content.to_string(),
             finished: false,
             created_at: now.naive_utc(),

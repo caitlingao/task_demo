@@ -4,6 +4,21 @@ pub fn build_cli() -> App<'static> {
     App::new("task")
         .about("A fictional versioning CLI")
         .subcommand(
+            App::new("login")
+                .about("user login")
+                .arg(
+                    Arg::new("user")
+                        .short('u')
+                        .long("user")
+                        .about("user's email")
+                        .takes_value(true)
+                )
+        )
+        .subcommand(
+            App::new("logout")
+                .about("user logout")
+        )
+        .subcommand(
             App::new("add")
             .about("add task")
             .arg(
