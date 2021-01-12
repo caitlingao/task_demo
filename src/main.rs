@@ -67,6 +67,14 @@ fn run_command(cmd: (&str, &ArgMatches)) {
                _ => task_service::get_unfinished_tasks(),
            };
        }
+        ("export", arg) => {
+            let target = arg.value_of("target").unwrap();
+            task_service::export_tasks(target);
+        }
+        ("import", arg) => {
+            let file = arg.value_of("file").unwrap();
+            task_service::import_tasks(file);
+        }
        _ => unreachable!("The cli parser should prevent reaching here"),
    }
 }

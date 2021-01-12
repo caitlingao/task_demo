@@ -140,6 +140,97 @@ pub fn get_unfinished_tasks() -> Result<()> {
     Ok(())
 }
 
+pub fn export_tasks(file_name: &str) -> Result<()> {
+    if fs::metadata(constants::TASKS_FILE).is_err() {
+        println!("{}", constants::NO_TASK);
+    }
+
+    if fs::metadata(constants::DOWNLOAD_DIR).is_err() {
+        fs::create_dir(constants::DOWNLOAD_DIR);
+    }
+
+    let download_file_path = &format!("{download_dir}/{file_name}.json",
+                                      download_dir = constants::DOWNLOAD_DIR,
+                                      file_name = file_name);
+    let download_path = Path::new(download_file_path);
+    OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(&download_path);
+
+    // 只导出属于自己的数据
+    let user_id = account_service::get_current_user().unwrap().id;
+    let original_path = Path::new(constants::TASKS_FILE);
+    match get_metadata(original_path) {
+        Ok(tasks) => {
+            let download_tasks: Vec<Task> = tasks
+                .iter()
+                .filter(|task| task.user_id == user_id)
+                .cloned()
+                .collect();
+            write_to_file(download_path, &download_tasks);
+
+            let total = download_tasks.len();
+            let word = get_singular_plural(total, "item".to_string());
+            println!("Export success. {total} {word} exported.", total = total, word = word);
+        }
+        Err(_) => {
+            println!("{}",constants::GET_FILE_DATA_WRONG);
+        }
+    }
+    Ok(())
+}
+
+pub fn import_tasks(file_name: &str) -> Result<()> {
+    if !file_name.ends_with(constants::IMPORT_FILE_SUFFIX) {
+        println!("{}",constants::ASK_FOR_JSON_FILE);
+        return Ok(());
+    }
+    if fs::metadata(file_name).is_err() {
+        println!("{}",constants::FILE_NOT_EXIST);
+        return Ok(());
+    }
+
+    let import_file_path = Path::new(file_name);
+    match get_metadata(import_file_path) {
+        Ok(waiting_tasks) => {
+            // 去重
+            let purified_tasks = waiting_tasks
+                .iter()
+                .unique_by(|task| &task.user_id)
+                .unique_by(|task| &task.content)
+                .unique_by(|task| &task.finished)
+                .collect::<Vec<_>>();
+            let success_count = purified_tasks.len();
+
+            let task_file_path = Path::new(constants::TASKS_FILE);
+            if fs::metadata(constants::TASKS_FILE).is_err() {
+                OpenOptions::new()
+                    .read(true)
+                    .write(true)
+                    .create(true)
+                    .open(&task_file_path);
+            }
+
+            let mut tasks = get_metadata(task_file_path).unwrap();
+            for task in purified_tasks.iter() {
+                tasks.push(task.clone().clone());
+            }
+
+            write_to_file(&task_file_path, &tasks);
+
+            println!("Import success, success {}", success_count);
+        },
+        Err(_) => {
+            println!("{}",constants::GET_FILE_DATA_WRONG);
+        }
+    }
+
+
+    Ok(())
+}
+
 fn get_metadata(path: &Path) -> Result<Vec<Task>> {
     let string_data = fs::read_to_string(&path).expect(constants::UNABLE_TO_READ_FILE);
     let mut tasks: Vec<Task> = vec![];

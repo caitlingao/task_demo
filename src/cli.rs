@@ -45,4 +45,26 @@ pub fn build_cli() -> App<'static> {
                 .about("show all task list")
             ),
         )
+        .subcommand(
+            App::new("export")
+                .about("export tasks")
+                .arg(
+                    Arg::new("target")
+                        .short('t')
+                        .long("target")
+                        .about("target file")
+                        .takes_value(true)
+                )
+        )
+        .subcommand(
+            App::new("import")
+                .about("import tasks")
+                .arg(
+                    Arg::new("file")
+                        .short('f')
+                        .long("file")
+                        .about("import file name")
+                        .takes_value(true)
+                )
+        )
 }

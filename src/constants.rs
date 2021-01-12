@@ -21,5 +21,9 @@ pub const UNABLE_TO_READ_FILE: &str = "Unable to read file.";
 pub const UNABLE_WRITE_TO_FILE: &str = "Unable write to file.";
 pub const FILE_NOT_EXIST: &str = "File does not exist.";
 pub const GET_FILE_DATA_WRONG: &str = "Get data from file wrong.";
+pub const ASK_FOR_JSON_FILE: &str = "File must ends with .json";
+pub const IMPORT_FILE_SUFFIX: &str = ".json";
+
 // task
 pub const TASK_DOES_NOT_EXIST: &str = "Task does not exist.";
+pub const NO_TASK: &str = "There is not task.";
