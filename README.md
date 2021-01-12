@@ -6,6 +6,16 @@
 2. 构造项目：`cargo build`
 3. 运行项目：`cargo run xxx`，具体运行命令参见下面`运行命令`内容
 ## 运行命令
+- 用户登录
+```
+cargo run login -u example001@example.com // 执行此命令后敲回车，等待提示输入密码
+                                          
+Password: // 上一步敲回车后，在屏幕上会显示这样，输入密码回车。密码：123456
+```
+- 用户退出
+```
+cargo run logout
+```
 - 添加 Todo 项，数据存储在 tmp/tasks.json 文件中 
 ```
 cargo run add "first task"
