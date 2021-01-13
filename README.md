@@ -1,11 +1,17 @@
 ## 开发语言与包管理器
 - 开发语言 `Rust 1.49.0`
 - 包管理器 `Cargo`
+## 数据库
+- 数据库 `Postgres`
 ## 项目构建
 1. clone 项目到本地：`git clone https://github.com/caitlingao/task_demo.git`
 2. 构造项目：`cargo build`
 3. 运行项目：`cargo run xxx`，具体运行命令参见下面`运行命令`内容
 ## 运行命令
+- 初始化数据库
+```
+cargo run init
+```
 - 用户登录
 ```
 cargo run login -u example001@example.com // 执行此命令后敲回车，等待提示输入密码
@@ -46,3 +52,12 @@ cargo run import -f files/tasks.json
 ## 项目文件说明
 - 代码文件 `src` 目录下
 - 开发分析设计文档 `docs` 目录下
+## 使用数据库持久化数据
+1. 重命名`.env.sample` 为 `.env`，修改文件中数据库配置信息；
+2. 运行命令
+```
+diesel setup // 创建数据库
+```
+```
+diesel migration run // 执行 migration 迁移文件
+```

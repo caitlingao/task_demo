@@ -1,4 +1,25 @@
+use std::str::FromStr;
+
 use clap::{App, Arg};
+
+use crate::constants;
+
+pub enum Vals {
+    Login,
+    Logout,
+}
+
+impl FromStr for Vals {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "login" => Ok(Vals::Login),
+            "logout" => Ok(Vals::Logout),
+            _ => Err("no match"),
+        }
+    }
+}
 
 pub fn build_cli() -> App<'static> {
     App::new("task")
@@ -34,6 +55,7 @@ pub fn build_cli() -> App<'static> {
                 Arg::new("id")
                 .about("finished task id")
                 .required(true)
+                .validator(is_number),
             )
         )
         .subcommand(
@@ -65,6 +87,27 @@ pub fn build_cli() -> App<'static> {
                         .long("file")
                         .about("import file name")
                         .takes_value(true)
+                        .validator(is_json)
                 )
         )
+        .subcommand(
+            App::new("init")
+                .about("task init")
+        )
+}
+
+fn is_number(val: &str) -> Result<(), String> {
+    if val.parse::<i32>().is_ok() {
+        Ok(())
+    } else {
+        Err(String::from("Invalid Id"))
+    }
+}
+
+fn is_json(val: &str) -> Result<(), String> {
+    if val.ends_with(constants::IMPORT_FILE_SUFFIX) {
+        Ok(())
+    } else {
+        Err(String::from(constants::ASK_FOR_JSON_FILE))
+    }
 }
