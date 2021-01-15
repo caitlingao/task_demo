@@ -4,9 +4,9 @@ use std::path::Path;
 
 use chrono::{NaiveDateTime, Utc};
 use itertools::Itertools;
+use diesel::pg::PgConnection;
 
 use crate::{
-    config::db::Connection,
     constants,
     models::{
         task::{Task, TaskDTO},
@@ -14,7 +14,7 @@ use crate::{
     services::account_service,
 };
 
-pub fn get_tasks(conn: &Connection) {
+pub fn get_tasks(conn: &PgConnection) {
     let user_id = account_service::get_current_user().unwrap().id;
     match Task::find_all(user_id, conn) {
         Ok(tasks) => {
@@ -44,7 +44,7 @@ pub fn get_tasks(conn: &Connection) {
     }
 }
 
-pub fn get_unfinished_tasks(conn: &Connection) {
+pub fn get_unfinished_tasks(conn: &PgConnection) {
     let user_id = account_service::get_current_user().unwrap().id;
     match Task::find_unfinished(user_id, conn) {
         Ok(tasks) => {
@@ -62,7 +62,7 @@ pub fn get_unfinished_tasks(conn: &Connection) {
     }
 }
 
-pub fn add_task(content: &str, conn: &Connection) {
+pub fn add_task(content: &str, conn: &PgConnection) {
     let user_id = account_service::get_current_user().unwrap().id;
     let task = TaskDTO {
         user_id,
@@ -80,7 +80,7 @@ pub fn add_task(content: &str, conn: &Connection) {
     }
 }
 
-pub fn finish_task(id: i32, conn: &Connection) {
+pub fn finish_task(id: i32, conn: &PgConnection) {
     let user_id = account_service::get_current_user().unwrap().id;
     match Task::finish_task(id, user_id, conn) {
         Ok(_) => {
@@ -92,7 +92,7 @@ pub fn finish_task(id: i32, conn: &Connection) {
     }
 }
 
-pub fn export_tasks(file_name: &str, conn: &Connection) -> Result<(), Box<dyn Error>>{
+pub fn export_tasks(file_name: &str, conn: &PgConnection) -> Result<(), Box<dyn Error>>{
     if fs::metadata(constants::DOWNLOAD_DIR).is_err() {
         fs::create_dir(constants::DOWNLOAD_DIR);
     }
@@ -125,7 +125,7 @@ pub fn export_tasks(file_name: &str, conn: &Connection) -> Result<(), Box<dyn Er
     Ok(())
 }
 
-pub fn import_tasks(file_name: &str, conn: &Connection) {
+pub fn import_tasks(file_name: &str, conn: &PgConnection) {
     if !file_name.ends_with(constants::IMPORT_FILE_SUFFIX) {
         println!("{}",constants::ASK_FOR_JSON_FILE);
         return;
@@ -163,7 +163,7 @@ pub fn import_tasks(file_name: &str, conn: &Connection) {
     }
 }
 
-pub fn init_tasks(conn: &Connection) {
+pub fn init_tasks(conn: &PgConnection) {
     import_tasks(constants::TASKS_FILE, conn);
 }
 

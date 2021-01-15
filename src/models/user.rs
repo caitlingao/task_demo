@@ -1,10 +1,9 @@
 use bcrypt::{hash, verify, DEFAULT_COST};
 use chrono::{NaiveDateTime, Utc};
-use diesel::prelude::*;
+use diesel::{prelude::*, pg::PgConnection};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    config::db::Connection,
     schema::users::{self, dsl::*},
 };
 
@@ -41,7 +40,7 @@ pub struct LoginInfoDTO {
 }
 
 impl User {
-    pub fn login(login: LoginDTO, conn: &Connection) -> Option<LoginInfoDTO> {
+    pub fn login(login: LoginDTO, conn: &PgConnection) -> Option<LoginInfoDTO> {
         if let Ok(user) = users
             .filter(email.eq(login.email))
             .get_result::<User>(conn)
@@ -59,7 +58,7 @@ impl User {
         None
     }
 
-    pub fn mul_insert(mul_users: Vec<UserDTO>, conn: &Connection) -> QueryResult<usize> {
+    pub fn mul_insert(mul_users: Vec<UserDTO>, conn: &PgConnection) -> QueryResult<usize> {
         diesel::insert_into(users)
             .values(&mul_users)
             .execute(conn)

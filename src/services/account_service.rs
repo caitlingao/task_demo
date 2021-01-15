@@ -5,14 +5,14 @@ use std::path::Path;
 
 use bcrypt::{hash, DEFAULT_COST};
 use itertools::Itertools;
+use diesel::pg::PgConnection;
 
 use crate::{
-    config::db::Connection,
     constants,
     models::user::*,
 };
 
-pub fn login(email: &str, password: &str, conn: &Connection) -> Result<()> {
+pub fn login(email: &str, password: &str, conn: &PgConnection) -> Result<()> {
     let login_dto = LoginDTO {
         email: email.to_string(),
         password: password.to_string(),
@@ -61,7 +61,7 @@ pub fn logout() -> Result<()>{
     Ok(())
 }
 
-pub fn import_users(conn: &Connection) {
+pub fn import_users(conn: &PgConnection) {
     let import_file_path = Path::new(constants::USER_FILE);
     match get_metadata(import_file_path) {
         Ok(waiting_users) => {
