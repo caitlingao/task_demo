@@ -4,7 +4,9 @@ use diesel::{prelude::*, pg::PgConnection};
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    constants,
     schema::users::{self, dsl::*},
+    config::db::Connection,
 };
 
 #[derive(Queryable, Clone, Serialize, Deserialize, Debug)]
@@ -40,6 +42,20 @@ pub struct LoginInfoDTO {
 }
 
 impl User {
+    pub fn signup(user: UserDTO, conn: &Connection) -> Option<UserDTO> {
+        if Self::find_user_by_email(&user.email, conn).is_ok() {
+            return None;
+        }
+
+        let hashed_pwd = hash(&user.password, DEFAULT_COST).unwrap();
+        let user = UserDTO {
+            password: hashed_pwd,
+            ..user
+        };
+        diesel::insert_into(users).values(&user).execute(conn);
+        Some(UserDTO{..user})
+    }
+
     pub fn login(login: LoginDTO, conn: &PgConnection) -> Option<LoginInfoDTO> {
         if let Ok(user) = users
             .filter(email.eq(login.email))
@@ -62,5 +78,9 @@ impl User {
         diesel::insert_into(users)
             .values(&mul_users)
             .execute(conn)
+    }
+
+    pub fn find_user_by_email(e: &str, conn: &Connection) -> QueryResult<User> {
+        users.filter(email.eq(e)).get_result::<User>(conn)
     }
 }

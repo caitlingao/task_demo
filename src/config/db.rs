@@ -21,6 +21,8 @@ use r2d2_redis::{
 
 embed_migrations!();
 
+pub type Connection = PgConnection;
+
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 pub type RedisPool = r2d2::Pool<RedisConnectionManager>;
 

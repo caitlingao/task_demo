@@ -10,6 +10,9 @@ pub const TASKS_FILE: &str = "tmp/tasks.json";
 pub const CACHE_FILE: &str = "tmp/cache.json";
 
 // message
+// signin
+pub const MESSAGE_SIGNUP_SUCCESS: &str = "Signup successfully";
+
 // login logout
 pub const LOGIN_SUCCESS: &str = "Login success.";
 pub const LOGIN_FAILED: &str = "User does not exist or wrong password.";

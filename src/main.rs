@@ -60,7 +60,7 @@ use diesel::pg::PgConnection;
 
 use constants::TMP_DIR;
 use services::*;
-use controllers::tasks_controller;
+use controllers::*;
 
 mod cli;
 mod config;
@@ -84,6 +84,10 @@ fn rocket() -> rocket::Rocket {
         .mount(
             "/api/v1/",
             routes![tasks_controller::index],
+        )
+        .mount(
+            "/api/v1/",
+            routes![users_controller::create],
         )
 }
 fn main() {
