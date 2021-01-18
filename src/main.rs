@@ -1,36 +1,3 @@
-// #[macro_use]
-// extern crate r2d2_redis;
-//
-// use std::thread;
-//
-// use r2d2_redis::{r2d2, redis, RedisConnectionManager};
-// use r2d2_redis::redis::Commands;
-//
-//
-// fn main() {
-//     let manager = RedisConnectionManager::new("redis://redis:123456@localhost:6379").expect("set");
-//     let pool = r2d2::Pool::builder()
-//         .build(manager)
-//         .unwrap();
-//     let mut conn = pool.get().unwrap();
-//     let n: i64 = conn.incr("counter", 1).unwrap();
-//     println!("Counter increased to {}", n);
-//
-//     // let mut handles = vec![];
-//     //
-//     // for _i in 0..10i32 {
-//     //     let pool = pool.clone();
-//     //     handles.push(thread::spawn(move || {
-//     //         let mut conn = pool.get().unwrap();
-//     //         let n: i64 = conn.incr("counter", 1).unwrap();
-//     //         println!("Counter increased to {}", n);
-//     //     }));
-//     // }
-//     //
-//     // for h in handles {
-//     //     h.join().unwrap();
-//     // }
-// }
 #![feature(plugin, decl_macro, proc_macro_hygiene)]
 
 #[macro_use]
@@ -58,13 +25,11 @@ use dotenv::dotenv;
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 
-use constants::TMP_DIR;
 use services::*;
 use controllers::*;
 
 mod cli;
 mod config;
-mod constants;
 mod controllers;
 mod models;
 mod schema;

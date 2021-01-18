@@ -4,6 +4,7 @@ use rocket::request::{self, Request, FromRequest};
 use rocket::response::{self, Responder, Response};
 use rocket_contrib::json::{Json, JsonValue};
 use serde_json::Value;
+use serde::Serialize;
 
 #[derive(Debug)]
 pub struct ApiResponse {
@@ -18,6 +19,23 @@ impl<'r> Responder<'r> for ApiResponse {
             .status(self.status)
             .header(ContentType::JSON)
             .ok()
+    }
+}
+
+impl ApiResponse {
+    pub fn Ok() -> ApiResponse {
+        ApiResponse {
+            status: Status::Ok,
+            json: json!({}),
+        }
+    }
+
+    pub fn json<T>(&self, res: ResponseBody<T>) -> ApiResponse
+    where T: Serialize {
+       ApiResponse {
+           status: self.status,
+           json: json!(res),
+       }
     }
 }
 

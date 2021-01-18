@@ -1,24 +1,23 @@
 use rocket_contrib::json::{Json, JsonValue};
-// use serde_json::Value;
-use diesel::result::Error;
-use rocket::http::Status;
 
 use crate::{
     config::db::*,
     models::user::*,
-    utils::response::{ResponseBody, ApiResponse},
+    utils::{
+        constant_code::*,
+        constants::*,
+        response::{
+            ResponseBody,
+            ApiResponse,
+        }
+    },
+    services::user_service,
 };
 
 #[post("/users", format = "application/json", data = "<user_dto>")]
 pub fn create(user_dto: Json<UserDTO>, conn: Conn) -> ApiResponse {
-    match User::signup(user_dto.into_inner(), &conn) {
-        Some(user) => ApiResponse {
-            json: json!(ResponseBody::new(0, "success", user)),
-            status: Status::Ok
-        },
-        None => ApiResponse {
-            json: json!(ResponseBody::new(10000, "success", "")),
-            status: Status::BadRequest
-        }
+    match user_service::signup(user_dto.into_inner(), &conn) {
+        Ok(token_response) => ApiResponse::Ok().json(ResponseBody::new(SUCCESS, MESSAGE_SIGNUP_SUCCESS, token_response)),
+        Err(err) => err.response()
     }
 }

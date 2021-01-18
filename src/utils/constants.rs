@@ -1,6 +1,8 @@
 // constants
 pub const SINGULAR_PLURAL_THRESHOLD: i32 = 1;
 pub const TASK_ID_INCREMENT_THRESHOLD: i32 = 1;
+pub const ONE_WEEK: i64 = 60 * 60 * 24 * 7; // in seconds
+pub const NANOSECOND_THRESHOLD: i64 = 1_000_000_000;
 
 // file path
 pub const TMP_DIR: &str = "tmp";
@@ -10,14 +12,16 @@ pub const TASKS_FILE: &str = "tmp/tasks.json";
 pub const CACHE_FILE: &str = "tmp/cache.json";
 
 // message
-// signin
+// signup
 pub const MESSAGE_SIGNUP_SUCCESS: &str = "Signup successfully";
+pub const MESSAGE_SIGNUP_FAILED: &str = "Signup failed";
 
 // login logout
 pub const LOGIN_SUCCESS: &str = "Login success.";
 pub const LOGIN_FAILED: &str = "User does not exist or wrong password.";
 pub const ASK_FOR_LOGIN: &str = "Please login first.";
 pub const LOGOUT_SUCCESS: &str = "Logout success.";
+pub const MESSAGE_INTERNAL_SERVER_ERROR: &str = "Internal Server Error";
 
 // file
 pub const UNABLE_TO_READ_FILE: &str = "Unable to read file.";

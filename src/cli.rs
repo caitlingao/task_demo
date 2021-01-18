@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use clap::{App, Arg};
 
-use crate::constants;
+use crate::utils::constants;
 
 pub enum Vals {
     Login,

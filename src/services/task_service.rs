@@ -7,15 +7,14 @@ use itertools::Itertools;
 use diesel::pg::PgConnection;
 
 use crate::{
-    constants,
     models::{
         task::{Task, TaskDTO},
     },
-    services::account_service,
+    utils::constants,
 };
 
 pub fn get_tasks(conn: &PgConnection) {
-    let user_id = account_service::get_current_user().unwrap().id;
+    let user_id = 1;
     match Task::find_all(user_id, conn) {
         Ok(tasks) => {
             let total = tasks.len();
@@ -45,7 +44,7 @@ pub fn get_tasks(conn: &PgConnection) {
 }
 
 pub fn get_unfinished_tasks(conn: &PgConnection) {
-    let user_id = account_service::get_current_user().unwrap().id;
+    let user_id = 1;
     match Task::find_unfinished(user_id, conn) {
         Ok(tasks) => {
             let total = tasks.len();
@@ -63,7 +62,7 @@ pub fn get_unfinished_tasks(conn: &PgConnection) {
 }
 
 pub fn add_task(content: &str, conn: &PgConnection) {
-    let user_id = account_service::get_current_user().unwrap().id;
+    let user_id = 1;
     let task = TaskDTO {
         user_id,
         content: content.to_string(),
@@ -81,7 +80,7 @@ pub fn add_task(content: &str, conn: &PgConnection) {
 }
 
 pub fn finish_task(id: i32, conn: &PgConnection) {
-    let user_id = account_service::get_current_user().unwrap().id;
+    let user_id = 1;
     match Task::finish_task(id, user_id, conn) {
         Ok(_) => {
             println!("Item {} done.", id);
@@ -107,7 +106,7 @@ pub fn export_tasks(file_name: &str, conn: &PgConnection) -> Result<(), Box<dyn 
         .create(true)
         .open(&download_path);
 
-    let user_id = account_service::get_current_user().unwrap().id;
+    let user_id = 1;
     match Task::find_all(user_id, conn) {
         Ok(tasks) => {
             write_to_file(&download_path, &tasks);

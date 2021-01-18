@@ -2,4 +2,5 @@
 tmp/
 .idea/
 .env
+src/secret.key
 Cargo.lock
