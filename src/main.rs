@@ -30,6 +30,7 @@ use controllers::*;
 
 mod cli;
 mod config;
+mod constants;
 mod controllers;
 mod models;
 mod schema;
@@ -53,6 +54,10 @@ fn rocket() -> rocket::Rocket {
         .mount(
             "/api/v1/",
             routes![users_controller::create],
+        )
+        .mount(
+            "/api/v1/",
+            routes![sessions_controller::create, sessions_controller::destroy],
         )
 }
 fn main() {

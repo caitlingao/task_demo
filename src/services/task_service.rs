@@ -10,7 +10,7 @@ use crate::{
     models::{
         task::{Task, TaskDTO},
     },
-    utils::constants,
+    constants::{message_constants, static_num_constants},
 };
 
 pub fn get_tasks(conn: &PgConnection) {
@@ -92,12 +92,12 @@ pub fn finish_task(id: i32, conn: &PgConnection) {
 }
 
 pub fn export_tasks(file_name: &str, conn: &PgConnection) -> Result<(), Box<dyn Error>>{
-    if fs::metadata(constants::DOWNLOAD_DIR).is_err() {
-        fs::create_dir(constants::DOWNLOAD_DIR);
+    if fs::metadata(message_constants::DOWNLOAD_DIR).is_err() {
+        fs::create_dir(message_constants::DOWNLOAD_DIR);
     }
 
     let download_file_path = &format!("{download_dir}/{file_name}.json",
-                                      download_dir = constants::DOWNLOAD_DIR,
+                                      download_dir = message_constants::DOWNLOAD_DIR,
                                       file_name = file_name);
     let download_path = Path::new(download_file_path);
     OpenOptions::new()
@@ -111,7 +111,7 @@ pub fn export_tasks(file_name: &str, conn: &PgConnection) -> Result<(), Box<dyn 
         Ok(tasks) => {
             write_to_file(&download_path, &tasks);
             // let json: String = serde_json::to_string(&tasks)?;
-            // fs::write(&download_path, &json).expect(constants::UNABLE_WRITE_TO_FILE);
+            // fs::write(&download_path, &json).expect(message_constants::UNABLE_WRITE_TO_FILE);
 
             let total = tasks.len();
             let word = get_singular_plural(total, "item".to_string());
@@ -125,12 +125,12 @@ pub fn export_tasks(file_name: &str, conn: &PgConnection) -> Result<(), Box<dyn 
 }
 
 pub fn import_tasks(file_name: &str, conn: &PgConnection) {
-    if !file_name.ends_with(constants::IMPORT_FILE_SUFFIX) {
-        println!("{}",constants::ASK_FOR_JSON_FILE);
+    if !file_name.ends_with(message_constants::IMPORT_FILE_SUFFIX) {
+        println!("{}",message_constants::ASK_FOR_JSON_FILE);
         return;
     }
     if fs::metadata(file_name).is_err() {
-        println!("{}",constants::FILE_NOT_EXIST);
+        println!("{}",message_constants::FILE_NOT_EXIST);
         return;
     }
 
@@ -156,14 +156,14 @@ pub fn import_tasks(file_name: &str, conn: &PgConnection) {
         }
         Err(e) => {
             println!("err: {:?}", e);
-            println!("{}",constants::GET_FILE_DATA_WRONG);
+            println!("{}",message_constants::GET_FILE_DATA_WRONG);
         }
 
     }
 }
 
 pub fn init_tasks(conn: &PgConnection) {
-    import_tasks(constants::TASKS_FILE, conn);
+    import_tasks(message_constants::TASKS_FILE, conn);
 }
 
 fn get_metadata(path: &Path) -> Result<Vec<TaskDTO>, Box<dyn Error>> {
@@ -182,13 +182,13 @@ fn get_metadata(path: &Path) -> Result<Vec<TaskDTO>, Box<dyn Error>> {
 
 fn write_to_file(path: &Path, tasks: &Vec<Task>) -> Result<(), Box<dyn Error>>{
     let json: String = serde_json::to_string(tasks)?;
-    fs::write(path, &json).expect(constants::UNABLE_WRITE_TO_FILE);
+    fs::write(path, &json).expect(message_constants::UNABLE_WRITE_TO_FILE);
 
     Ok(())
 }
 
 fn get_singular_plural(count: usize, word: String) -> String {
-    if count > constants::SINGULAR_PLURAL_THRESHOLD as usize {
+    if count > static_num_constants::SINGULAR_PLURAL_THRESHOLD as usize {
         format!("{}s", word)
     } else {
         format!("{}", word)

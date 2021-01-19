@@ -1,7 +1,7 @@
 use chrono::Utc;
 
 use crate::{
-    utils::constants::{ONE_WEEK, NANOSECOND_THRESHOLD},
+    constants::static_num_constants::{ONE_WEEK, NANOSECOND_THRESHOLD},
 };
 
 pub fn now_second() -> i64 {

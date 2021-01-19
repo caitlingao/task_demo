@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use clap::{App, Arg};
 
-use crate::utils::constants;
+use crate::constants::message_constants;
 
 pub enum Vals {
     Login,
@@ -105,9 +105,9 @@ fn is_number(val: &str) -> Result<(), String> {
 }
 
 fn is_json(val: &str) -> Result<(), String> {
-    if val.ends_with(constants::IMPORT_FILE_SUFFIX) {
+    if val.ends_with(message_constants::IMPORT_FILE_SUFFIX) {
         Ok(())
     } else {
-        Err(String::from(constants::ASK_FOR_JSON_FILE))
+        Err(String::from(message_constants::ASK_FOR_JSON_FILE))
     }
 }

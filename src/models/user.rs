@@ -1,3 +1,5 @@
+use std::io::Error;
+
 use bcrypt::{hash, verify, DEFAULT_COST};
 use chrono::{NaiveDateTime, Utc};
 use diesel::{prelude::*};
@@ -9,8 +11,9 @@ use crate::{
     schema::users::{self, dsl::*},
     utils::util,
 };
-use diesel::result::Error;
+// use diesel::result::Error;
 use crate::utils::util::{now_second, one_week_second};
+use crate::services::jwt::UserToken;
 
 #[derive(Queryable, Clone, Serialize, Deserialize, Debug)]
 pub struct User {
@@ -62,10 +65,10 @@ impl User {
             ..user
         };
 
-        let login_session_str = User::generate_login_session();
         diesel::insert_into(users).values(&user).execute(conn);
-        let ttl_second = now_second() + one_week_second();
-        set_atomic_str_with_ttl(&user.email, &login_session_str, ttl_second as usize);
+
+        let login_session_str = User::generate_login_session();
+        Self::save_to_cache(&user.email, &login_session_str);
 
         Some(LoginInfoDTO {
             username: user.username,
@@ -75,21 +78,29 @@ impl User {
     }
 
     pub fn login(login: LoginDTO, conn: &Connection) -> Option<LoginInfoDTO> {
-        if let Ok(user) = users
-            .filter(email.eq(login.email))
-            .get_result::<User>(conn)
-        {
-           if verify(&login.password, &user.password).unwrap() {
-               return Some(LoginInfoDTO {
-                   username: user.username,
-                   email: user.email,
-                   login_session: User::generate_login_session(),
-               });
-           }
-        } else {
-            return None;
+        match Self::find_user_by_email(&login.email, conn) {
+            Ok(user) => {
+                let mut login_session_str = String::new();
+                if verify(&login.password, &user.password).unwrap() {
+                    login_session_str = User::generate_login_session();
+                    Self::save_to_cache(&user.email, &login_session_str);
+                }
+
+                return Some(LoginInfoDTO {
+                    username: user.username,
+                    email: user.email,
+                    login_session: login_session_str,
+                });
+            }
+            Err(_) => None
         }
-        None
+    }
+
+    pub fn logout(e: &str) -> Result<(), String>{
+        match del_atomic_str(e) {
+            Ok(_) => Ok(()),
+            Err(err) => Err(err.detail().unwrap().to_string()),
+        }
     }
 
     pub fn mul_insert(mul_users: Vec<UserDTO>, conn: &Connection) -> QueryResult<usize> {
@@ -104,5 +115,14 @@ impl User {
 
     pub fn generate_login_session() -> String {
         Uuid::new_v4().to_simple().to_string()
+    }
+
+    pub fn is_valid_login_session(user_token: &UserToken) -> bool {
+        get_atomic_str(&user_token.user).is_ok()
+    }
+
+    fn save_to_cache(login_email: &str, login_session: &str) {
+        let ttl_second = now_second() + one_week_second();
+        set_atomic_str_with_ttl(login_email, &login_session, ttl_second as usize);
     }
 }

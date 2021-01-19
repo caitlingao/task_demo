@@ -106,3 +106,11 @@ pub fn get_atomic_str(key: &str) -> RedisResult<String> {
     FromRedisValue::from_redis_value(&value)
 }
 
+
+pub fn del_atomic_str(key: &str) -> RedisResult<()> {
+    let pool = redis_pool();
+    let mut conn = pool.get().unwrap();
+    conn.del(key)?;
+
+    Ok(())
+}

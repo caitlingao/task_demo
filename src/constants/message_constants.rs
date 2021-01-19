@@ -1,8 +1,7 @@
-// constants
-pub const SINGULAR_PLURAL_THRESHOLD: i32 = 1;
-pub const TASK_ID_INCREMENT_THRESHOLD: i32 = 1;
-pub const ONE_WEEK: i64 = 60 * 60 * 24 * 7; // in seconds
-pub const NANOSECOND_THRESHOLD: i64 = 1_000_000_000;
+// Headers
+pub const AUTHORIZATION: &str = "Authorization";
+
+pub const MESSAGE_INVALID_TOKEN: &str = "invalid token, please login again";
 
 // file path
 pub const TMP_DIR: &str = "tmp";
@@ -18,10 +17,14 @@ pub const MESSAGE_SIGNUP_FAILED: &str = "Signup failed";
 
 // login logout
 pub const LOGIN_SUCCESS: &str = "Login success.";
+pub const MESSAGE_LOGIN_SUCCESS: &str = "Login successfully";
 pub const LOGIN_FAILED: &str = "User does not exist or wrong password.";
+pub const MESSAGE_LOGIN_FAILED: &str = "Wrong username or password, please try again";
+pub const MESSAGE_USER_NOT_FOUND: &str = "User not found, please signup";
 pub const ASK_FOR_LOGIN: &str = "Please login first.";
 pub const LOGOUT_SUCCESS: &str = "Logout success.";
 pub const MESSAGE_INTERNAL_SERVER_ERROR: &str = "Internal Server Error";
+pub const MESSAGE_LOGOUT_SUCCESS: &str = "Logout successfully";
 
 // file
 pub const UNABLE_TO_READ_FILE: &str = "Unable to read file.";
