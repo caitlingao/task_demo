@@ -8,6 +8,7 @@ use uuid::Uuid;
 
 use crate::{
     config::db::{*, Connection},
+    config::redis,
     schema::users::{self, dsl::*},
     utils::util,
 };
@@ -97,7 +98,7 @@ impl User {
     }
 
     pub fn logout(e: &str) -> Result<(), String>{
-        match del_atomic_str(e) {
+        match redis::del_atomic_str(e) {
             Ok(_) => Ok(()),
             Err(err) => Err(err.detail().unwrap().to_string()),
         }
@@ -118,11 +119,11 @@ impl User {
     }
 
     pub fn is_valid_login_session(user_token: &UserToken) -> bool {
-        get_atomic_str(&user_token.user).is_ok()
+        redis::get_atomic_str(&user_token.user).is_ok()
     }
 
     fn save_to_cache(login_email: &str, login_session: &str) {
         let ttl_second = now_second() + one_week_second();
-        set_atomic_str_with_ttl(login_email, &login_session, ttl_second as usize);
+        redis::set_atomic_str_with_ttl(login_email, &login_session, ttl_second as usize);
     }
 }

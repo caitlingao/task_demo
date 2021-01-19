@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 rocket = "0.4.6"
 chrono = { version = "0.4.19", features = ["serde"] }
+rocket_cors = "0.5.1"
 
 serde_json = "1.0.60"
 serde_derive = "1.0.118"
@@ -27,6 +28,9 @@ bcrypt = "0.8"
 jsonwebtoken = "7.2.0"
 
 itertools = "0.10"
+
+log = "0.4.11"
+env_logger = "0.7.1"
 
 [dependencies.rocket_contrib]
 version = "0.4.6"
