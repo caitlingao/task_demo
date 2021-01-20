@@ -16,7 +16,8 @@ use crate::{
 use crate::utils::util::{now_second, one_week_second};
 use crate::services::jwt::UserToken;
 
-#[derive(Queryable, Clone, Serialize, Deserialize, Debug)]
+#[derive(Identifiable, Queryable, PartialEq, Clone, Serialize, Deserialize, Debug)]
+#[table_name = "users"]
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -97,7 +98,7 @@ impl User {
         }
     }
 
-    pub fn logout(e: &str) -> Result<(), String>{
+    pub fn logout(e: &str) -> Result<(), String> {
         match redis::del_atomic_str(e) {
             Ok(_) => Ok(()),
             Err(err) => Err(err.detail().unwrap().to_string()),

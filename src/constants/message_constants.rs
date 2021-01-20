@@ -3,6 +3,12 @@ pub const AUTHORIZATION: &str = "Authorization";
 
 pub const MESSAGE_INVALID_TOKEN: &str = "invalid token, please login again";
 
+pub const MESSAGE_OK: &str = "ok";
+pub const MESSAGE_CAN_NOT_FETCH_DATA: &str = "Can not fetch data";
+pub const MESSAGE_CAN_NOT_INSERT_DATA: &str = "Can not insert data";
+pub const MESSAGE_CAN_NOT_UPDATE_DATA: &str = "Can not update data";
+pub const MESSAGE_CAN_NOT_DELETE_DATA: &str = "Can not delete data";
+
 // file path
 pub const TMP_DIR: &str = "tmp";
 pub const DOWNLOAD_DIR: &str = "tmp/download";

@@ -15,7 +15,11 @@ pub fn rocket() -> Rocket {
         .attach(get_cors())
         .mount(
             "/api/v1/",
-            routes![tasks_controller::index],
+            routes![
+                tasks_controller::index,
+                tasks_controller::create,
+                tasks_controller::finish
+            ],
         )
         .mount(
             "/api/v1/",
