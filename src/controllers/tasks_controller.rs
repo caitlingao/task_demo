@@ -1,8 +1,21 @@
+use std::io::{self, Cursor, Write};
+
 use rocket_contrib::json::{Json, JsonValue};
-use rocket::request::Form;
-use rocket::http::RawStr;
 use serde_json::Value;
 use diesel::result::Error;
+use rocket::{
+    http::{ContentType, Status},
+    response::{Stream, status::Custom},
+    Data,
+};
+
+use multipart::{
+    mock::StdoutTee,
+    server::{
+        Multipart,
+        save::{Entries, SaveResult::*},
+    }
+};
 
 use crate::{
     config::db::Conn,
@@ -42,6 +55,7 @@ pub fn create(
         Err(err) => err.response()
     }
 }
+
 #[put("/tasks/<id>/finish", format = "application/json")]
 pub fn finish(
     id: i32,
@@ -53,6 +67,18 @@ pub fn finish(
     }
 
     match task_service::finish(token.unwrap(), id, &conn) {
+        Ok(_) => ApiResponse::Ok().json(ResponseBody::new(code_constants::SUCCESS, message_constants::MESSAGE_OK, "")),
+        Err(err) => err.response()
+    }
+}
+
+#[post("/tasks/export", format = "application/json")]
+pub fn export(token: Result<UserToken, ApiResponse>, conn: Conn) -> ApiResponse {
+    if let Err(err) = token {
+        return err;
+    }
+
+    match task_service::export(token.unwrap(), &conn) {
         Ok(_) => ApiResponse::Ok().json(ResponseBody::new(code_constants::SUCCESS, message_constants::MESSAGE_OK, "")),
         Err(err) => err.response()
     }

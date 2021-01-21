@@ -13,6 +13,7 @@ extern crate dotenv;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_cors;
+extern crate multipart;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]

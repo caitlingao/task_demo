@@ -18,7 +18,8 @@ pub fn rocket() -> Rocket {
             routes![
                 tasks_controller::index,
                 tasks_controller::create,
-                tasks_controller::finish
+                tasks_controller::finish,
+                tasks_controller::export,
             ],
         )
         .mount(
